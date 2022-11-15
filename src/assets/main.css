@@ -6,6 +6,9 @@ a,
   color: hsla(160, 100%, 37%, 1);
   transition: 0.4s;
 }
+body {
+  background: #aeb2aa;
+}
 
 @media (hover: hover) {
   a:hover {

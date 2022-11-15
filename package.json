@@ -10,7 +10,10 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@types/pokedex-promise-v2": "github:mudkipme/pokeapi-v2-typescript",
+    "event": "^1.0.0",
     "pinia": "^2.0.23",
+    "pokenode-ts": "^1.17.0",
     "vue": "^3.2.41"
   },
   "devDependencies": {
