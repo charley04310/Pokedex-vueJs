@@ -24,19 +24,20 @@ import { usePokemonStore } from "../../../stores/pokemon";
 import { useUserStore } from "../../../stores/user";
 import { storeToRefs } from "pinia";
 import type { Pokemon } from "../../../stores/pokemon";
+
 const emit = defineEmits<{
   (e: "onClickOpenDetailsScreen", value: Pokemon): void;
 }>();
 
 const pokemonStore = usePokemonStore();
 const userStore = useUserStore();
-
 const { pokemonList, currentUrl } = storeToRefs(pokemonStore);
-
 const { language } = storeToRefs(userStore);
 
 onMounted(() => {
-  pokemonStore.fetchPokemonFromLanguage(currentUrl.value, language.value);
+  if (pokemonList.value.length === 0) {
+    pokemonStore.fetchPokemonFromLanguage(currentUrl.value, language.value);
+  }
 });
 /* 
 async function getPokemonDetails(id: number) {

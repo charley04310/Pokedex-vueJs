@@ -36,12 +36,17 @@ const pokemonStore = usePokemonStore();
 const ModalIsOpen = ref(false);
 
 const { isLogged, isLanguageSelected, language } = storeToRefs(userStore);
+const { currentUrl, pokemonList } = storeToRefs(pokemonStore);
 
 function getPokemonDetails(value: Pokemon) {
   ModalIsOpen.value = true;
   pokemonStore.showPokemonDetails(value, language.value);
 }
+
 const SwitchStateScreen = () => {
+  /*   pokemonList.value.forEach((element) => {
+    console.log(element);
+  }); */
   ModalIsOpen.value = !ModalIsOpen.value;
 };
 </script>

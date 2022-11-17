@@ -21,13 +21,13 @@ const { filterText, urlPrevious, urlNext } = storeToRefs(store);
     <div class="button-navigation">
       <button
         v-if="store.prevButtonIsVisible"
-        @click="store.fetchPokemonFromLanguage(urlPrevious, language)"
+        @click="store.fetchPokemonFromLanguage(urlPrevious, language, 0)"
       >
         PREVIOUUUS
       </button>
       <button
         v-if="store.nextButtonIsVisible"
-        @click="store.fetchPokemonFromLanguage(urlNext, language)"
+        @click="store.fetchPokemonFromLanguage(urlNext, language, 1)"
       >
         NEEEEXT
       </button>

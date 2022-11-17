@@ -3,6 +3,8 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import type { AxiosResponse } from "axios";
 import { PokemonClient } from "pokenode-ts";
+import pokemonTraduction from "../assets/traductions/fr_pokemon.json";
+
 export type Pokemon = {
   id: number;
   name: string;
@@ -28,12 +30,13 @@ export const usePokemonStore = defineStore("Pokemon", () => {
     taille: ref(0),
     poids: ref(0),
   };
-
   const setPokemonImage = (id: number) => {
     return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
   };
 
   const pokemonList = ref<Pokemon[]>([]);
+  const pokemonCloneList = ref<Pokemon[]>([]);
+
   const currentUrl = ref<string>(
     "https://pokeapi.co/api/v2/pokemon-species?offset=0&limit=9"
   );
@@ -56,27 +59,34 @@ export const usePokemonStore = defineStore("Pokemon", () => {
     }
   });
 
-  async function fetchPokemonFromLanguage(url: string, langue: string) {
+  async function fetchPokemonFromLanguage(
+    url: string,
+    langue: string,
+    mode?: number
+  ) {
     const api = new PokemonClient();
-    pokemonList.value.splice(0);
+    pokemonList.value = [];
+    pokemonCloneList.value = [];
 
-    const listPokemonAPI = await axios.get(url);
+    try {
+      const listPokemonAPI = await axios.get(url);
 
-    /*     if (urlPrevious.value === "") {
-      currentUrl.value =
-        "https://pokeapi.co/api/v2/pokemon-species?offset=0&limit=9";
-    } else {
-      currentUrl.value = urlNext.value;
-    } */
-    //
-    currentUrl.value = listPokemonAPI.data.url;
-    console.log(currentUrl.value);
-    urlNext.value = listPokemonAPI.data.next;
-    urlPrevious.value = listPokemonAPI.data.previous;
+      if (mode === 1) {
+        currentUrl.value = listPokemonAPI.data.next;
+      } else if (mode === 0) {
+        currentUrl.value = listPokemonAPI.data.previous;
+      }
 
-    for (let i = 0; i < listPokemonAPI.data.results.length; i++) {
-      const pokemon = fetchPokemonCard(langue, listPokemonAPI, i);
-      pokemonList.value.push(await pokemon);
+      urlNext.value = listPokemonAPI.data.next;
+      urlPrevious.value = listPokemonAPI.data.previous;
+
+      for (let i = 0; i < listPokemonAPI.data.results.length; i++) {
+        const pokemon = await fetchPokemonCard(langue, listPokemonAPI, i);
+        pokemonList.value.push(pokemon);
+        pokemonCloneList.value.push(pokemon);
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -133,20 +143,21 @@ export const usePokemonStore = defineStore("Pokemon", () => {
   };
 
   watch(filterText, async (search) => {
-    const countPokemon = await axios.get(urlNext.value).then((response) => {
-      return response.data.count;
+    let count = 0;
+
+    const resultSearchUser = pokemonTraduction.filter((pokemon: any) => {
+      return (
+        pokemon.name
+          .toLocaleLowerCase()
+          .startsWith(search.toLocaleLowerCase()) && count++ < 9
+      );
     });
 
-    let url = `https://pokeapi.co/api/v2/pokemon-species?offset=0&limit=${countPokemon}`;
-    const getListPokemonBySearch = await axios.get(url);
-
-    let count = 0;
-    const resultSearchUser = getListPokemonBySearch.data.results.filter(
-      (x: any) => {
-        return x.name.startsWith(search) && count++ < 9;
-      }
-    );
-    pokemonList.value = resultSearchUser;
+    if (search.length === 0) {
+      pokemonList.value = pokemonCloneList.value;
+    } else {
+      pokemonList.value = resultSearchUser;
+    }
   });
 
   return {
