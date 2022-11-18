@@ -36,7 +36,6 @@ const pokemonStore = usePokemonStore();
 const ModalIsOpen = ref(false);
 
 const { isLogged, isLanguageSelected, language } = storeToRefs(userStore);
-const { currentUrl, pokemonList } = storeToRefs(pokemonStore);
 
 function getPokemonDetails(value: Pokemon) {
   ModalIsOpen.value = true;
