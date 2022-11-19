@@ -1,9 +1,8 @@
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 import { defineStore } from "pinia";
 import axios from "axios";
 import type { AxiosResponse } from "axios";
 import { PokemonClient } from "pokenode-ts";
-import pokemonTraduction from "../assets/traductions/fr_pokemon.json";
 
 export type Pokemon = {
   id: number;
@@ -36,6 +35,7 @@ export const usePokemonStore = defineStore("Pokemon", () => {
 
   const pokemonList = ref<Pokemon[]>([]);
   const pokemonCloneList = ref<Pokemon[]>([]);
+  //const pokemonLanguage = ref("de");
 
   const currentUrl = ref<string>(
     "https://pokeapi.co/api/v2/pokemon-species?offset=0&limit=9"
@@ -127,8 +127,8 @@ export const usePokemonStore = defineStore("Pokemon", () => {
       });
     // On récupère les types du pokémon
     await api.getPokemonById(pokemonDetails.id.value).then(async (data) => {
-      pokemonDetails.taille.value = data.height;
-      pokemonDetails.poids.value = data.weight;
+      pokemonDetails.taille.value = data.height / 10;
+      pokemonDetails.poids.value = data.weight / 10;
 
       for (let i = 0; i < data.types.length; i++) {
         await axios.get(data.types[i].type.url).then((data) => {
@@ -142,27 +142,10 @@ export const usePokemonStore = defineStore("Pokemon", () => {
     });
   };
 
-  watch(filterText, async (search) => {
-    let count = 0;
-
-    const resultSearchUser = pokemonTraduction.filter((pokemon: any) => {
-      return (
-        pokemon.name
-          .toLocaleLowerCase()
-          .startsWith(search.toLocaleLowerCase()) && count++ < 9
-      );
-    });
-
-    if (search.length === 0) {
-      pokemonList.value = pokemonCloneList.value;
-    } else {
-      pokemonList.value = resultSearchUser;
-    }
-  });
-
   return {
     urlNext,
     pokemonList,
+    pokemonCloneList,
     pokemonDetails,
     fetchPokemonFromLanguage,
     showPokemonDetails,

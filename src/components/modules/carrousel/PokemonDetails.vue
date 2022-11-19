@@ -1,26 +1,35 @@
 <template>
   <nav>
     <aside>
-      <img v-if="props.image != null" v-bind:src="props.image" alt="" />
+      <img
+        v-if="pokemonStore.pokemonDetails.image != null"
+        v-bind:src="pokemonStore.pokemonDetails.image"
+        alt=""
+      />
     </aside>
     <article>
       <section>
         <div>
-          <input type="range" id="volume" value="67" name="volume" disabled />
-          <label for="volume">Volume</label>
+          <p v-html="pokemonStore.pokemonDetails.description"></p>
         </div>
-
-        <p v-html="props.nom"></p>
+        <div>
+          <h2>Abilities</h2>
+          <ul>
+            <slot v-for="pokemonType in pokemonStore.pokemonDetails.type">
+              <li v-html="pokemonType"></li>
+            </slot>
+          </ul>
+          <p v-html="`${pokemonStore.pokemonDetails.poids} kg`"></p>
+          <p v-html="`${pokemonStore.pokemonDetails.taille} m`"></p>
+        </div>
       </section>
     </article>
   </nav>
   <button @click="emit('onClickCloseDetails')">FERMER</button>
 </template>
 <script setup lang="ts">
-const props = defineProps<{
-  nom: string;
-  image: string;
-}>();
+import { usePokemonStore } from "@/stores/pokemon";
+const pokemonStore = usePokemonStore();
 
 const emit = defineEmits<{
   (e: "onClickCloseDetails"): void;

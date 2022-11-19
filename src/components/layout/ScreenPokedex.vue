@@ -8,7 +8,7 @@ import type { Pokemon } from "../../stores/pokemon";
 
 <template>
   <section id="screen">
-    <h2>DOT MATRIX WITH STEREO SOUND</h2>
+    <h2 class="title-deco">DOT MATRIX WITH STEREO SOUND</h2>
 
     <nav id="display">
       <ScreenSelectYourLanguage v-if="!isLanguageSelected && isLogged" />
@@ -20,8 +20,6 @@ import type { Pokemon } from "../../stores/pokemon";
       <ScreenPokemonDetails
         v-if="ModalIsOpen"
         @onClickCloseDetails="SwitchStateScreen"
-        :nom="pokemonStore.pokemonDetails.name"
-        :image="pokemonStore.pokemonDetails.image"
       />
     </nav>
   </section>
@@ -37,24 +35,22 @@ const ModalIsOpen = ref(false);
 
 const { isLogged, isLanguageSelected, language } = storeToRefs(userStore);
 
-function getPokemonDetails(value: Pokemon) {
+async function getPokemonDetails(value: Pokemon) {
+  await pokemonStore.showPokemonDetails(value, language.value);
   ModalIsOpen.value = true;
-  pokemonStore.showPokemonDetails(value, language.value);
 }
 
 const SwitchStateScreen = () => {
-  /*   pokemonList.value.forEach((element) => {
-    console.log(element);
-  }); */
   ModalIsOpen.value = !ModalIsOpen.value;
 };
 </script>
 
 <style lang="css">
-h2 {
+.title-deco {
   text-align: center;
   font-size: 18px;
   color: white;
+  padding: 1rem 0;
 }
 #screen {
   background-color: grey;
