@@ -11,6 +11,16 @@ import GameBoard from "./components/layout/GameBoard.vue";
 </template>
 
 <style lang="css">
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@100;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@100;500&family=Rokkitt:wght@300&display=swap");
+h1,
+h2 {
+  font-family: "Archivo", sans-serif;
+}
+p,
+li {
+  font-family: "Rokkitt", serif;
+}
 body {
   background-color: rgb(192, 192, 192);
 }

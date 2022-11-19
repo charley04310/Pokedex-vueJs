@@ -7,18 +7,25 @@ import type { Pokemon } from "../../stores/pokemon";
 </script>
 
 <template>
+  <section class="title-container">
+    <div class="title-deco-container">
+      <div class="title-bloc-left"></div>
+      <div class="bloc-title-deco">
+        <h2 class="title-deco">DOT MATRIX WITH STEREO SOUND</h2>
+      </div>
+      <div class="title-bloc-right"></div>
+    </div>
+  </section>
   <section id="screen">
-    <h2 class="title-deco">DOT MATRIX WITH STEREO SOUND</h2>
-
     <nav id="display">
       <ScreenSelectYourLanguage v-if="!isLanguageSelected && isLogged" />
 
       <ScreenPokemonList
-        v-if="!ModalIsOpen && isLogged && isLanguageSelected"
+        v-if="!pokemonDetailsScreen && isLogged && isLanguageSelected"
         @onClickOpenDetailsScreen="(value) => getPokemonDetails(value)"
       />
       <ScreenPokemonDetails
-        v-if="ModalIsOpen"
+        v-if="pokemonDetailsScreen"
         @onClickCloseDetails="SwitchStateScreen"
       />
     </nav>
@@ -31,17 +38,18 @@ import { storeToRefs } from "pinia";
 
 const userStore = useUserStore();
 const pokemonStore = usePokemonStore();
-const ModalIsOpen = ref(false);
 
 const { isLogged, isLanguageSelected, language } = storeToRefs(userStore);
 
+const { pokemonDetailsScreen } = storeToRefs(pokemonStore);
+
 async function getPokemonDetails(value: Pokemon) {
   await pokemonStore.showPokemonDetails(value, language.value);
-  ModalIsOpen.value = true;
+  pokemonDetailsScreen.value = true;
 }
 
 const SwitchStateScreen = () => {
-  ModalIsOpen.value = !ModalIsOpen.value;
+  pokemonDetailsScreen.value = !pokemonDetailsScreen.value;
 };
 </script>
 
@@ -51,9 +59,37 @@ const SwitchStateScreen = () => {
   font-size: 18px;
   color: white;
   padding: 1rem 0;
+  font-size: 14px;
+  padding: 0 1rem;
+}
+.title-container {
+  width: 600px;
+  margin: 0 auto;
+  position: relative;
+}
+.title-deco-container {
+  display: flex;
+  position: absolute;
+  width: 100%;
+  top: 18px;
+  left: 46px;
+}
+.title-bloc-left {
+  width: 25%;
+  border-bottom: 2px solid #204a87;
+  border-top: 3px solid #5c3566;
+  padding: 0.25rem;
+  height: 100%;
+}
+.title-bloc-right {
+  width: 10%;
+  border-bottom: 2px solid #204a87;
+  border-top: 3px solid #5c3566;
+  padding: 0.25rem;
+  height: 100%;
 }
 #screen {
-  background-color: grey;
+  background-color: #888a96;
   padding: 2rem 0;
   border-radius: 1.5rem;
   text-align: right;
@@ -72,7 +108,7 @@ const SwitchStateScreen = () => {
 
 @media (min-width: 600px) {
   #screen {
-    padding: 0 5rem 3rem 5rem;
+    padding: 3rem 5rem 3rem 5rem;
     border-radius: 1.5rem 1.5rem 5rem 1.5rem;
     width: 600px;
   }

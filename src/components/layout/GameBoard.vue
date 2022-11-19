@@ -11,28 +11,32 @@ import en_pokemon from "../../assets/traductions/en_pokemon.json";
 
 <template>
   <section class="gameplay">
-    <input
-      type="search"
-      v-model="filterText"
-      name="getPokemon"
-      id="search"
-      placeholder="Chercher pour un pokemon"
-    />
+    <h1><b>System GAME TOY</b> <span>TM</span></h1>
+
     <div
-      class="button-navigation"
+      class="bloc-navigation"
       v-if="userStore.isLanguageSelected && userStore.isLogged"
     >
       <button
+        class="button-navigation"
         :disabled="!pokemon.prevButtonIsVisible"
         @click="pokemon.fetchPokemonFromLanguage(urlPrevious, language, 0)"
       >
-        PREVIOUUUS
+        <img src="src/assets/img/arrow_left.svg" alt="flèche de droite" />
       </button>
+      <input
+        type="search"
+        v-model="filterText"
+        name="getPokemon"
+        id="search"
+        placeholder="Chercher pour un pokemon"
+      />
       <button
+        class="button-navigation"
         :disabled="!pokemon.nextButtonIsVisible"
         @click="pokemon.fetchPokemonFromLanguage(urlNext, language, 1)"
       >
-        NEEEEXT
+        <img src="src/assets/img/arrow_right.svg" alt="flèche de gauche" />
       </button>
     </div>
   </section>
@@ -41,7 +45,7 @@ import en_pokemon from "../../assets/traductions/en_pokemon.json";
 <script setup lang="ts">
 const pokemon = usePokemonStore();
 const userStore = useUserStore();
-const { language } = storeToRefs(userStore);
+const { language, username, isLanguageSelected } = storeToRefs(userStore);
 
 const { filterText, urlPrevious, urlNext, pokemonList, pokemonCloneList } =
   storeToRefs(pokemon);
@@ -83,23 +87,40 @@ watch(filterText, async (search) => {
 ("r ");
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
+h1 {
+  color: #24346e;
+  text-align: left;
+  margin-top: 0.5rem;
+}
 .gameplay {
   display: flex;
   flex-direction: column;
   width: auto;
   margin: 0 auto;
+  text-align: center;
 }
 #search {
   padding-left: 1rem;
   width: 50%;
   margin: 0 auto;
   margin-top: 0px;
-  margin-top: 1rem;
   height: 40px;
   border-radius: 5px 2px 5px 1 px;
   border-radius: 10px;
-  background: gray;
+  background: #888a96;
+}
+.bloc-navigation {
+  display: flex;
+  margin-top: 3rem;
+  align-items: center;
+}
+.button-navigation {
+  background: none;
+  cursor: pointer;
+  border: none;
+  margin: 0 1rem;
+  border-radius: 5px;
 }
 @media (min-width: 600px) {
   .gameplay {

@@ -10,8 +10,14 @@ export type Pokemon = {
   image: string;
   description?: string;
   type?: Array<string>;
+  stats?: Array<string>;
   taille?: number;
   poids?: number;
+};
+
+export type PokemonStat = {
+  name: string;
+  stat: number;
 };
 
 export const usePokemonStore = defineStore("Pokemon", () => {
@@ -26,6 +32,7 @@ export const usePokemonStore = defineStore("Pokemon", () => {
     image: ref(""),
     description: ref(""),
     type: [""],
+    stats: [{}],
     taille: ref(0),
     poids: ref(0),
   };
@@ -35,7 +42,8 @@ export const usePokemonStore = defineStore("Pokemon", () => {
 
   const pokemonList = ref<Pokemon[]>([]);
   const pokemonCloneList = ref<Pokemon[]>([]);
-  //const pokemonLanguage = ref("de");
+
+  const pokemonDetailsScreen = ref(false);
 
   const currentUrl = ref<string>(
     "https://pokeapi.co/api/v2/pokemon-species?offset=0&limit=9"
@@ -45,14 +53,14 @@ export const usePokemonStore = defineStore("Pokemon", () => {
   const filterText = ref<string>("");
 
   const prevButtonIsVisible = computed(() => {
-    if (urlPrevious.value != null) {
+    if (urlPrevious.value != null && !pokemonDetailsScreen.value) {
       return true;
     } else {
       return false;
     }
   });
   const nextButtonIsVisible = computed(() => {
-    if (urlNext.value != null) {
+    if (urlNext.value != null && !pokemonDetailsScreen.value) {
       return true;
     } else {
       return false;
@@ -111,6 +119,7 @@ export const usePokemonStore = defineStore("Pokemon", () => {
 
   const showPokemonDetails = async (obj: Pokemon, langue: string) => {
     const api = new PokemonClient();
+    pokemonDetails.stats = [];
 
     pokemonDetails.name.value = obj.name;
     pokemonDetails.id.value = obj.id;
@@ -139,6 +148,27 @@ export const usePokemonStore = defineStore("Pokemon", () => {
           });
         });
       }
+      // on récupère le nom et les (PV/DEF/ATTACK) stats en fonction de la langue
+      for (let i = 0; i < 3; i++) {
+        const pokemonStats = {
+          name: ref(""),
+          stat: ref(0),
+        };
+        const statName = await axios.get(data.stats[i].stat.url);
+
+        console.log(data.stats[i].base_stat);
+
+        pokemonStats.stat.value = data.stats[i].base_stat;
+
+        statName.data.names.forEach((element: any) => {
+          if (element.language.name === langue) {
+            pokemonStats.name.value = element.name;
+          }
+        });
+
+        pokemonDetails.stats.push(pokemonStats);
+      }
+      console.log(pokemonDetails.stats);
     });
   };
 
@@ -147,6 +177,7 @@ export const usePokemonStore = defineStore("Pokemon", () => {
     pokemonList,
     pokemonCloneList,
     pokemonDetails,
+    pokemonDetailsScreen,
     fetchPokemonFromLanguage,
     showPokemonDetails,
     urlPrevious,
