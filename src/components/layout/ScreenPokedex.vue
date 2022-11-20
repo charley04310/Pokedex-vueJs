@@ -2,7 +2,6 @@
 import ScreenPokemonList from "../modules/carrousel/PokemonsList.vue";
 import ScreenPokemonDetails from "../modules/carrousel/PokemonDetails.vue";
 import ScreenSelectYourLanguage from "../layout/SelectYourLanguage.vue";
-import { ref } from "vue";
 import type { Pokemon } from "../../stores/pokemon";
 </script>
 
@@ -38,32 +37,27 @@ import { storeToRefs } from "pinia";
 
 const userStore = useUserStore();
 const pokemonStore = usePokemonStore();
-
 const { isLogged, isLanguageSelected, language } = storeToRefs(userStore);
-
 const { pokemonDetailsScreen } = storeToRefs(pokemonStore);
+const SwitchStateScreen = () => {
+  pokemonDetailsScreen.value = !pokemonDetailsScreen.value;
+};
 
 async function getPokemonDetails(value: Pokemon) {
   await pokemonStore.showPokemonDetails(value, language.value);
   pokemonDetailsScreen.value = true;
 }
-
-const SwitchStateScreen = () => {
-  pokemonDetailsScreen.value = !pokemonDetailsScreen.value;
-};
 </script>
 
 <style lang="css">
 .title-deco {
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
   color: white;
   padding: 1rem 0;
-  font-size: 14px;
   padding: 0 1rem;
 }
 .title-container {
-  width: 600px;
   margin: 0 auto;
   position: relative;
 }
@@ -71,19 +65,19 @@ const SwitchStateScreen = () => {
   display: flex;
   position: absolute;
   width: 100%;
-  top: 18px;
-  left: 46px;
+  top: 11px;
+  left: 20px;
 }
 .title-bloc-left {
-  width: 25%;
-  border-bottom: 2px solid #204a87;
+  width: 13%;
+  border-bottom: 3px solid #204a87;
   border-top: 3px solid #5c3566;
   padding: 0.25rem;
   height: 100%;
 }
 .title-bloc-right {
   width: 10%;
-  border-bottom: 2px solid #204a87;
+  border-bottom: 3px solid #204a87;
   border-top: 3px solid #5c3566;
   padding: 0.25rem;
   height: 100%;
@@ -107,6 +101,16 @@ const SwitchStateScreen = () => {
 }
 
 @media (min-width: 600px) {
+  .title-bloc-left {
+    width: 25%;
+  }
+  .title-deco-container {
+    top: 18px;
+    left: 43px;
+  }
+  .title-container {
+    width: 600px;
+  }
   #screen {
     padding: 3rem 5rem 3rem 5rem;
     border-radius: 1.5rem 1.5rem 5rem 1.5rem;

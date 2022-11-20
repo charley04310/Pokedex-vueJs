@@ -39,16 +39,6 @@ onMounted(() => {
     pokemonStore.fetchPokemonFromLanguage(currentUrl.value, language.value);
   }
 });
-/* 
-async function getPokemonDetails(id: number) {
-  const api = new PokemonClient();
-
-  await api
-    .getPokemonById(id)
-    .then((data) => console.log(data)) // will output "Luxray"
-    .catch((error) => console.error(error));
-} */
-
 function emitModal(value: Pokemon) {
   emit("onClickOpenDetailsScreen", value);
 }
@@ -59,7 +49,7 @@ function emitModal(value: Pokemon) {
   background: #f2f2f27d;
   margin: 5px;
   border-radius: 3px;
-  border: 0.5px solid gray;
+  border: 0.5px solid #fdfdfd5c;
   text-align: right;
   width: 30%;
 }

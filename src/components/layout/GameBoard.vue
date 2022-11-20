@@ -3,7 +3,7 @@ import { usePokemonStore } from "../../stores/pokemon";
 import type { Pokemon } from "../../stores/pokemon";
 import { useUserStore } from "../../stores/user";
 import { storeToRefs } from "pinia";
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import fr_pokemon from "../../assets/traductions/fr_pokemon.json";
 import de_pokemon from "../../assets/traductions/de_pokemon.json";
 import en_pokemon from "../../assets/traductions/en_pokemon.json";
@@ -11,7 +11,9 @@ import en_pokemon from "../../assets/traductions/en_pokemon.json";
 
 <template>
   <section class="gameplay">
-    <h1><b>System GAME TOY</b> <span>TM</span></h1>
+    <h1>
+      <b>System <em>GAME TOY</em></b> <span style="font-size: 12px">TM</span>
+    </h1>
 
     <div
       class="bloc-navigation"
@@ -20,36 +22,68 @@ import en_pokemon from "../../assets/traductions/en_pokemon.json";
       <button
         class="button-navigation"
         :disabled="!pokemon.prevButtonIsVisible"
-        @click="pokemon.fetchPokemonFromLanguage(urlPrevious, language, 0)"
+        @click="
+          pokemon.fetchPokemonFromLanguage(
+            urlPrevious,
+            language,
+            NAVIGATION.PREVIOUS
+          )
+        "
       >
-        <img src="src/assets/img/arrow_left.svg" alt="flèche de droite" />
+        <img src="src/assets/img/arrow_left.svg" alt="flèche de gauche" />
       </button>
       <input
         type="search"
         v-model="filterText"
         name="getPokemon"
         id="search"
-        placeholder="Chercher pour un pokemon"
+        :placeholder="CHERCHER_UN_POKEMON"
       />
       <button
         class="button-navigation"
         :disabled="!pokemon.nextButtonIsVisible"
-        @click="pokemon.fetchPokemonFromLanguage(urlNext, language, 1)"
+        @click="
+          pokemon.fetchPokemonFromLanguage(urlNext, language, NAVIGATION.NEXT)
+        "
       >
-        <img src="src/assets/img/arrow_right.svg" alt="flèche de gauche" />
+        <img src="src/assets/img/arrow_right.svg" alt="flèche de droite" />
       </button>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
+import {
+  NAVIGATION,
+  LANGUAGE,
+  TRADUCTION_FR,
+  TRADUCTION_EN,
+  TRADUCTION_DE,
+  TRADUCTION_ES,
+  TRADUCTION_IT,
+} from "../../assets/enums/enums";
+
 const pokemon = usePokemonStore();
 const userStore = useUserStore();
-const { language, username, isLanguageSelected } = storeToRefs(userStore);
+const { language } = storeToRefs(userStore);
 
 const { filterText, urlPrevious, urlNext, pokemonList, pokemonCloneList } =
   storeToRefs(pokemon);
 
+const CHERCHER_UN_POKEMON = computed(() => {
+  switch (language.value) {
+    case LANGUAGE.FRANCAIS:
+      return TRADUCTION_FR.CHERCHER_UN_POKEMON;
+    case LANGUAGE.ANGLAIS:
+      return TRADUCTION_EN.CHERCHER_UN_POKEMON;
+    case LANGUAGE.ALLEMAND:
+      return TRADUCTION_DE.CHERCHER_UN_POKEMON;
+    case LANGUAGE.ITALIEN:
+      return TRADUCTION_IT.CHERCHER_UN_POKEMON;
+    case LANGUAGE.ESPAGNOLE:
+      return TRADUCTION_ES.CHERCHER_UN_POKEMON;
+  }
+});
 // fonctionnalité de la bar de recherche
 watch(filterText, async (search) => {
   let count = 0;
@@ -57,12 +91,12 @@ watch(filterText, async (search) => {
 
   // on choisi le bon fichier de traduction en fonction de la langue
   switch (language.value) {
-    case "de":
+    case LANGUAGE.ALLEMAND:
       jsonTraduction.value = de_pokemon;
       break;
-    case "fr":
+    case LANGUAGE.FRANCAIS:
       jsonTraduction.value = fr_pokemon;
-    case "it" && "es" && "en":
+    case LANGUAGE.ITALIEN && LANGUAGE.ESPAGNOLE && LANGUAGE.ANGLAIS:
       jsonTraduction.value = en_pokemon;
       break;
     default:
@@ -84,7 +118,6 @@ watch(filterText, async (search) => {
     pokemonList.value = resultSearchUser;
   }
 });
-("r ");
 </script>
 
 <style lang="css" scoped>
@@ -109,6 +142,7 @@ h1 {
   border-radius: 5px 2px 5px 1 px;
   border-radius: 10px;
   background: #888a96;
+  color: white;
 }
 .bloc-navigation {
   display: flex;

@@ -21,9 +21,6 @@ p,
 li {
   font-family: "Rokkitt", serif;
 }
-body {
-  background-color: rgb(192, 192, 192);
-}
 
 @media (min-width: 1024px) {
   .logo {

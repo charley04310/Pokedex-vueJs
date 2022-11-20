@@ -3,6 +3,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import type { AxiosResponse } from "axios";
 import { PokemonClient } from "pokenode-ts";
+import { NAVIGATION, URL_POKEMON } from "@/assets/enums/enums";
 
 export type Pokemon = {
   id: number;
@@ -13,11 +14,6 @@ export type Pokemon = {
   stats?: Array<string>;
   taille?: number;
   poids?: number;
-};
-
-export type PokemonStat = {
-  name: string;
-  stat: number;
 };
 
 export const usePokemonStore = defineStore("Pokemon", () => {
@@ -36,21 +32,17 @@ export const usePokemonStore = defineStore("Pokemon", () => {
     taille: ref(0),
     poids: ref(0),
   };
-  const setPokemonImage = (id: number) => {
-    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-  };
-
   const pokemonList = ref<Pokemon[]>([]);
   const pokemonCloneList = ref<Pokemon[]>([]);
-
   const pokemonDetailsScreen = ref(false);
-
-  const currentUrl = ref<string>(
-    "https://pokeapi.co/api/v2/pokemon-species?offset=0&limit=9"
-  );
+  const currentUrl = ref<string>(URL_POKEMON.CURRENT);
   const urlNext = ref<string>("");
   const urlPrevious = ref<string>("");
   const filterText = ref<string>("");
+  const counterFetch = ref(0);
+  const setPokemonImage = (id: number) => {
+    return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+  };
 
   const prevButtonIsVisible = computed(() => {
     if (urlPrevious.value != null && !pokemonDetailsScreen.value) {
@@ -76,12 +68,19 @@ export const usePokemonStore = defineStore("Pokemon", () => {
     pokemonList.value = [];
     pokemonCloneList.value = [];
 
+    // on empeche l'utilisateur de faire plusieur fetche en meme temps
+    if (counterFetch.value != 0) {
+      return;
+    } else {
+      counterFetch.value++;
+    }
+
     try {
       const listPokemonAPI = await axios.get(url);
 
-      if (mode === 1) {
+      if (mode === NAVIGATION.NEXT) {
         currentUrl.value = listPokemonAPI.data.next;
-      } else if (mode === 0) {
+      } else if (mode === NAVIGATION.PREVIOUS) {
         currentUrl.value = listPokemonAPI.data.previous;
       }
 
@@ -93,6 +92,7 @@ export const usePokemonStore = defineStore("Pokemon", () => {
         pokemonList.value.push(pokemon);
         pokemonCloneList.value.push(pokemon);
       }
+      counterFetch.value = 0;
     } catch (e) {
       console.error(e);
     }
