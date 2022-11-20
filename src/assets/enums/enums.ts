@@ -3,6 +3,12 @@ export enum NAVIGATION {
   PREVIOUS = 0,
 }
 
+export enum SEARCH {
+  EMPTY_SEARCH = 0,
+}
+export enum SCREEN {
+  NBR_CARDS = 9,
+}
 export enum LANGUAGE {
   FRANCAIS = "fr",
   ANGLAIS = "en",

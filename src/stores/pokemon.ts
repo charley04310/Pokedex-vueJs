@@ -155,9 +155,6 @@ export const usePokemonStore = defineStore("Pokemon", () => {
           stat: ref(0),
         };
         const statName = await axios.get(data.stats[i].stat.url);
-
-        console.log(data.stats[i].base_stat);
-
         pokemonStats.stat.value = data.stats[i].base_stat;
 
         statName.data.names.forEach((element: any) => {

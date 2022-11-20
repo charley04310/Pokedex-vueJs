@@ -61,6 +61,8 @@ import {
   TRADUCTION_DE,
   TRADUCTION_ES,
   TRADUCTION_IT,
+  SEARCH,
+  SCREEN,
 } from "../../assets/enums/enums";
 
 const pokemon = usePokemonStore();
@@ -88,7 +90,7 @@ const CHERCHER_UN_POKEMON = computed(() => {
 watch(filterText, async (search) => {
   let count = 0;
   let jsonTraduction = ref<Pokemon[]>();
-
+  const resultSearchUser = ref<Pokemon[]>();
   // on choisi le bon fichier de traduction en fonction de la langue
   switch (language.value) {
     case LANGUAGE.ALLEMAND:
@@ -103,19 +105,28 @@ watch(filterText, async (search) => {
       jsonTraduction.value = en_pokemon;
   }
 
-  // on construit le tableau en fonction de la recheche utilisateur
-  const resultSearchUser = jsonTraduction.value.filter((pokemon: any) => {
-    return (
-      pokemon.name.toLocaleLowerCase().startsWith(search.toLocaleLowerCase()) &&
-      count++ < 9
-    );
-  });
+  if (Number.isInteger(parseInt(search))) {
+    resultSearchUser.value = jsonTraduction.value.filter((pokemon: any) => {
+      return (
+        pokemon.id.toString().startsWith(search.toString()) &&
+        count++ < SCREEN.NBR_CARDS
+      );
+    });
+  } else {
+    resultSearchUser.value = jsonTraduction.value.filter((pokemon: any) => {
+      return (
+        pokemon.name
+          .toLocaleLowerCase()
+          .startsWith(search.toLocaleLowerCase()) && count++ < SCREEN.NBR_CARDS
+      );
+    });
+  }
 
   // si la bar de recherche est vide on récupère le clone dans la Pokelist
-  if (search.length === 0) {
+  if (search.length === SEARCH.EMPTY_SEARCH) {
     pokemonList.value = pokemonCloneList.value;
   } else {
-    pokemonList.value = resultSearchUser;
+    pokemonList.value = resultSearchUser.value;
   }
 });
 </script>

@@ -1,5 +1,3 @@
-<script lang="ts"></script>
-
 <template>
   <ul>
     <!-- --------------------      on met les datas en brut ------------------------>
@@ -8,7 +6,7 @@
         <figure>
           <img
             :src="Pokemon.image"
-            :alt="'The pokemon that you are consulting is ' + Pokemon.name"
+            :alt="`${POKEMON_CONSULTE} ${Pokemon.name}`"
           />
           <p class="pokemon-id" v-html="'#' + Pokemon.id"></p>
           <p class="pokemon-name" v-html="Pokemon.name"></p>
@@ -19,11 +17,19 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted } from "vue";
 import { usePokemonStore } from "../../../stores/pokemon";
 import { useUserStore } from "../../../stores/user";
 import { storeToRefs } from "pinia";
 import type { Pokemon } from "../../../stores/pokemon";
+import {
+  LANGUAGE,
+  TRADUCTION_DE,
+  TRADUCTION_EN,
+  TRADUCTION_ES,
+  TRADUCTION_FR,
+  TRADUCTION_IT,
+} from "@/assets/enums/enums";
 
 const emit = defineEmits<{
   (e: "onClickOpenDetailsScreen", value: Pokemon): void;
@@ -33,7 +39,20 @@ const pokemonStore = usePokemonStore();
 const userStore = useUserStore();
 const { pokemonList, currentUrl } = storeToRefs(pokemonStore);
 const { language } = storeToRefs(userStore);
-
+const POKEMON_CONSULTE = computed(() => {
+  switch (language.value) {
+    case LANGUAGE.FRANCAIS:
+      return TRADUCTION_FR.POKEMON_CONSULTE;
+    case LANGUAGE.ANGLAIS:
+      return TRADUCTION_EN.POKEMON_CONSULTE;
+    case LANGUAGE.ALLEMAND:
+      return TRADUCTION_DE.POKEMON_CONSULTE;
+    case LANGUAGE.ITALIEN:
+      return TRADUCTION_IT.POKEMON_CONSULTE;
+    case LANGUAGE.ESPAGNOLE:
+      return TRADUCTION_ES.POKEMON_CONSULTE;
+  }
+});
 onMounted(() => {
   if (pokemonList.value.length === 0) {
     pokemonStore.fetchPokemonFromLanguage(currentUrl.value, language.value);
